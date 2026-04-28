@@ -35,7 +35,7 @@ jobs:
 
       - name: Build
         run: >
-          dotnet publish M3u8Downloader_H.bilibili 
+          dotnet build M3u8Downloader_H.bilibili 
           -c Release 
           -o M3u8Downloader_H.bilibili/bin/Publish 
           -p:Version=${{ github.ref_type == 'tag' && github.ref_name || format('999.9.9-ci-{0}', github.sha) }}
