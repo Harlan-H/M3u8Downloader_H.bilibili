@@ -61,15 +61,17 @@ jobs:
 
       - name: Generate Manifest and Create package
         run: |
-          dotnet run --project ManifestTool \
+          curl -o manifesttool.zip https://github.com/Harlan-H/M3u8Downloader_H.Plugins/releases/download/1.0.1/M3u8Downloader_H.ManifestTool-linux-x64.zip
+          unzip manifesttool.zip 
+          ./M3u8Downloader_H.ManifestTool \
             M3u8Downloader_H.bilibili/M3u8Downloader_H.bilibili.dll \
             https://github.com/${{ github.event.repository.full_name }}/releases/download/${{  github.ref_name || inputs.version }}/M3u8Downloader_H.bilibili.zip \
             https://github.com/${{ github.event.repository.full_name }}
 
-            cp manifest.json M3u8Downloader_H.bilibili/
+          cp manifest.json M3u8Downloader_H.bilibili/
 
-            cd M3u8Downloader_H.bilibili
-            zip -r ../M3u8Downloader_H.bilibili.zip .
+          cd M3u8Downloader_H.bilibili
+          zip -r ../M3u8Downloader_H.bilibili.zip .
 
       - name: Create release
         env:
