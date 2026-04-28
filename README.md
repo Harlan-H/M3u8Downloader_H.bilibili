@@ -1,0 +1,2 @@
+# M3u8Downloader_H.bilibili
+M3u8Downloader_H下载器的b站下载插件
