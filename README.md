@@ -1,2 +1,2 @@
 # M3u8Downloader_H.bilibili
-M3u8Downloader_H下载器的b站下载插件
+此项目为M3u8Downloader_H下载器的b站下载插件,目前为最初版只实现了基础bv开头的视频下载，此项目无文件无需单独下载

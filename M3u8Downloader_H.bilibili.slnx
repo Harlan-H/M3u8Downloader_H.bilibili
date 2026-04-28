@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="bilibili.Test/bilibili.Test.csproj" />
+  <Project Path="M3u8Downloader_H.bilibili.Core/M3u8Downloader_H.bilibili.Core.csproj" />
+  <Project Path="M3u8Downloader_H.bilibili/M3u8Downloader_H.bilibili.csproj" />
+</Solution>
