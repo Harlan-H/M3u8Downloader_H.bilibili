@@ -82,7 +82,7 @@ namespace M3u8Downloader_H.bilibili.ViewModels
                 {
                     var downloadParam = await downloadService.GetDownloadParam(item);
                     windowContext.AppCommandService.DownloadMedia(downloadParam);
-                    await Task.Delay(50);
+                    await Task.Delay(20);
                     SelectedVideos.Remove(item);
                 }
 

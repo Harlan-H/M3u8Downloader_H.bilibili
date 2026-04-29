@@ -10,8 +10,14 @@ using System.Text;
 
 namespace M3u8Downloader_H.bilibili.Services
 {
+    
     internal class DownloadServices(BiliCoreClient biliCoreClient)
     {
+        private static readonly Dictionary<string, string> _header = new()
+        {
+            { "referer", "https://www.bilibili.com" }
+        };
+
         private Video Video = default!;
         public async Task<VideoData> ParseQuery(string? url)
         {
@@ -40,7 +46,7 @@ namespace M3u8Downloader_H.bilibili.Services
             Uri videoUri = new(video.BaserUrl);
             Uri audioUri = new(audio.BaserUrl);
 
-            return new MediaDownloadParams(string.Empty, videoUri, audioUri, playList.Title, null)
+            return new MediaDownloadParams(string.Empty, videoUri, audioUri, playList.Title, _header)
             {
                 IsVideoStream = true,
             };
