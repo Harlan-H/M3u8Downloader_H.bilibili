@@ -3,20 +3,17 @@ using CommunityToolkit.Mvvm.Input;
 using M3u8Downloader_H.Abstractions.Models;
 using M3u8Downloader_H.bilibili.Core;
 using M3u8Downloader_H.bilibili.Core.Models;
-using M3u8Downloader_H.bilibili.Core.Streams;
 using M3u8Downloader_H.bilibili.Framework;
 using M3u8Downloader_H.bilibili.Services;
-using M3u8Downloader_H.Common.DownloadPrams;
-using System;
-using System.Collections.Generic;
+using M3u8Downloader_H.bilibili.Utils;
 using System.Collections.ObjectModel;
-using System.Text;
 
 namespace M3u8Downloader_H.bilibili.ViewModels
 {
     public partial class MainWindowViewModel : IPluginViewModelBase
     {
         private readonly IWindowContext windowContext;
+        private readonly Http http;
         private readonly BiliCoreClient biliCoreClient;
         private readonly DownloadServices downloadService;
         private string oldRequestUrl = default!;
@@ -32,7 +29,8 @@ namespace M3u8Downloader_H.bilibili.ViewModels
         public MainWindowViewModel(IWindowContext windowContext) 
         {
             this.windowContext = windowContext;
-            biliCoreClient = new BiliCoreClient(windowContext.ApiFactory.Client);
+            http = new(windowContext.ApiFactory);
+            biliCoreClient = new BiliCoreClient(http.Client);
             downloadService = new DownloadServices(biliCoreClient);
             SelectedVideos.CollectionChanged += (_, _) =>
             {

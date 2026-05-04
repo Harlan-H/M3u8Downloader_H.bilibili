@@ -9,17 +9,17 @@ namespace M3u8Downloader_H.bilibili
     public class GUI : IWindowPlugin
     {
         private IWindowContext _windowContext = default!;
+
+        public Type ViewType => typeof(MainWindowView);
+
         public void InitializeWindow(IWindowContext windowContext)
         {
             _windowContext = windowContext;
         }
 
-        public UserControl CreateMainView()
+        public object CreateMainView()
         {
-            return new MainWindowView()
-            {
-                DataContext = new MainWindowViewModel(_windowContext)
-            };
+            return new MainWindowViewModel(_windowContext);
         }
     }
 }
