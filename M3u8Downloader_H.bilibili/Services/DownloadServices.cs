@@ -43,8 +43,10 @@ namespace M3u8Downloader_H.bilibili.Services
             var video = streamManifest.Data.Dash.Videos.GetBestStreamInfoOptions();
             var audio = streamManifest.Data.Dash.Audios.GetBestStreamInfoOptions();
 
-            Uri videoUri = new(video.BaserUrl);
-            Uri audioUri = new(audio.BaserUrl);
+            int index = Random.Shared.Next(video.BaseUrls.Count);
+
+            Uri videoUri = new(video.BaseUrls[0]);
+            Uri audioUri = new(audio.BaseUrls[0]);
 
             return new MediaDownloadParams(string.Empty, videoUri, audioUri, playList.Title, _header)
             {

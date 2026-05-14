@@ -36,8 +36,9 @@ namespace M3u8Downloader_H.bilibili.Core.Models
     {
         [JsonPropertyName("id")]
         public int Quality { get; set; }
-        [JsonPropertyName("baseUrl")]
-        public string BaserUrl { get; set; } = default!;
+
+        [JsonPropertyName("backupUrl")]
+        public IList<string> BaseUrls { get; set; } = default!;
 
         [JsonPropertyName("bandwidth")]
         public int BandWidth { get; set; }

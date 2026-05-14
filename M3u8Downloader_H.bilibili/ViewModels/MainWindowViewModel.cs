@@ -80,7 +80,7 @@ namespace M3u8Downloader_H.bilibili.ViewModels
                     await Task.Delay(20);
                     SelectedVideos.Remove(item);
                 }
-                windowContext.SnackbarMaranger.Notify($"已经开始下载{SelectedVideos.Count}个,请点击左边基础查看");
+                windowContext.SnackbarMaranger.Notify($"已经开始下载,请点击左边基础查看");
             }
             catch (Exception ex) {
                 windowContext.SnackbarMaranger.Notify(ex.Message);
