@@ -11,7 +11,7 @@ using System.Text;
 namespace M3u8Downloader_H.bilibili.Services
 {
     
-    internal class DownloadServices(BiliCoreClient biliCoreClient)
+    internal class DownloadServices(BiliApiService biliApiService)
     {
         private static readonly Dictionary<string, string> _header = new()
         {
@@ -26,7 +26,7 @@ namespace M3u8Downloader_H.bilibili.Services
             var videoId = VideoId.TryParse(url);
             if (videoId != null)
             {
-                var videoData = await biliCoreClient.Videos.GetVideoInfoAsync(videoId.Value);
+                var videoData = await biliApiService.BiliClient.Videos.GetVideoInfoAsync(videoId.Value);
                 Video = videoData.Video;
                 return videoData;
             }
@@ -37,7 +37,7 @@ namespace M3u8Downloader_H.bilibili.Services
         public async Task<MediaDownloadParams> GetDownloadParam(PlayList playList)
         {
             StreamId streamId = new(Video.Bvid, Video.Aid, playList);
-            var streamManifest = await biliCoreClient.Streams.GetStreamManifestAsync(streamId);
+            var streamManifest = await biliApiService.BiliClient.Streams.GetStreamManifestAsync(streamId);
             streamManifest.EnsureSuccess();
 
             var video = streamManifest.Data.Dash.Videos.GetBestStreamInfoOptions();

@@ -5,7 +5,6 @@ using M3u8Downloader_H.bilibili.Core;
 using M3u8Downloader_H.bilibili.Core.Models;
 using M3u8Downloader_H.bilibili.Framework;
 using M3u8Downloader_H.bilibili.Services;
-using M3u8Downloader_H.bilibili.Utils;
 using System.Collections.ObjectModel;
 
 namespace M3u8Downloader_H.bilibili.ViewModels
@@ -13,8 +12,7 @@ namespace M3u8Downloader_H.bilibili.ViewModels
     public partial class MainWindowViewModel : IPluginViewModelBase
     {
         private readonly IWindowContext windowContext;
-        private readonly Http http;
-        private readonly BiliCoreClient biliCoreClient;
+        private readonly BiliApiService biliApiService;
         private readonly DownloadServices downloadService;
         private string oldRequestUrl = default!;
 
@@ -29,9 +27,8 @@ namespace M3u8Downloader_H.bilibili.ViewModels
         public MainWindowViewModel(IWindowContext windowContext) 
         {
             this.windowContext = windowContext;
-            http = new(windowContext.ApiFactory);
-            biliCoreClient = new BiliCoreClient(http.Client);
-            downloadService = new DownloadServices(biliCoreClient);
+            biliApiService = new(windowContext.ApiFactory);
+            downloadService = new DownloadServices(biliApiService);
             SelectedVideos.CollectionChanged += (_, _) =>
             {
                 ConfirmCommand.NotifyCanExecuteChanged();
