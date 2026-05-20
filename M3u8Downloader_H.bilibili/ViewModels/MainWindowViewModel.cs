@@ -1,43 +1,68 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using M3u8Downloader_H.Abstractions.Models;
-using M3u8Downloader_H.bilibili.Core;
-using M3u8Downloader_H.bilibili.Core.Models;
 using M3u8Downloader_H.bilibili.Framework;
 using M3u8Downloader_H.bilibili.Services;
-using System.Collections.ObjectModel;
+using M3u8Downloader_H.bilibili.ViewModels.Dialogs;
 
 namespace M3u8Downloader_H.bilibili.ViewModels
 {
-    public partial class MainWindowViewModel : IPluginViewModelBase
+    public partial class MainWindowViewModel(
+        INotificationService notificationService,
+        ViewModelManager viewModelManager,
+        SettingsService settingsService,
+        DownloadServices downloadService) : PluginViewModelBase
     {
-        private readonly IWindowContext windowContext;
-        private readonly BiliApiService biliApiService;
-        private readonly DownloadServices downloadService;
         private string oldRequestUrl = default!;
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(ShowLoginDialogCommand))]
+        public partial string? UName { get; set; }
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(StartParseCommand))]
         public partial string RequestUrl { get; set; } = default!;
 
-        public ObservableCollection<PlayList> PlayLists { get; } = [];
 
-        public ObservableCollection<PlayList> SelectedVideos { get; } = [];
+        public bool ShowViewModel => CurrentViewModel is not null;
 
-        public MainWindowViewModel(IWindowContext windowContext) 
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(ShowViewModel))]
+        public partial PluginViewModelBase? CurrentViewModel { get; set; } = default;
+
+
+        public override async Task InitializeAsync()
         {
-            this.windowContext = windowContext;
-            biliApiService = new(windowContext.ApiFactory);
-            downloadService = new DownloadServices(biliApiService);
-            SelectedVideos.CollectionChanged += (_, _) =>
+            settingsService.Load();
+            if (!string.IsNullOrEmpty(settingsService.Cookie))
             {
-                ConfirmCommand.NotifyCanExecuteChanged();
-                CancelCommand.NotifyCanExecuteChanged();
-            };
-            
+                try
+                {
+                    UserService userService = viewModelManager.CreateUserService();
+                    UName = await userService.GetUserInfoAsync(settingsService.Cookie);
+                }
+                catch (Exception ex)
+                {
+                    notificationService.Info($"获取用户信息失败,{ex.Message}");
+                }
+            }
+        }
+
+        private bool CanShowLoginDialog => string.IsNullOrEmpty(UName);
+
+        [RelayCommand(CanExecute = nameof(CanShowLoginDialog))]
+        private async Task ShowLoginDialog()
+        {
+            LoginViewModel loginViewModel = viewModelManager.CreateLoginViewModel();
+            var result = await DialogManager.ShowDialogAsync(loginViewModel);
+            if(!string.IsNullOrEmpty(result))
+            {
+                UName = result;
+            }
         }
 
         private bool CanStartParse => !string.IsNullOrWhiteSpace(RequestUrl);
+
         [RelayCommand(CanExecute = nameof(CanStartParse))]
         private async Task StartParse()
         {
@@ -45,54 +70,36 @@ namespace M3u8Downloader_H.bilibili.ViewModels
                 return;
 
             oldRequestUrl = RequestUrl;
-            PlayLists.Clear();
 
             try
             {
                 var videoData = await downloadService.ParseQuery(RequestUrl);
-                foreach (var item in videoData.Video.PlayLists)
+                if(videoData.Video.VideoSize == 1)
                 {
-                    PlayLists.Add(item);
+                    var downloadviewmodel = viewModelManager.CreateDownloadSingleViewModel(videoData.Video);
+                    CurrentViewModel = downloadviewmodel;
+                    _ = downloadviewmodel.InitStreamDataAsync(videoData.Video);
                 }
+                else if (videoData.Video.VideoSize > 1)
+                {
+                    var downloadPageViewModel  = viewModelManager.CreateDownloadPageViewModel(videoData.Video);
+                    _ = downloadPageViewModel.InitStreamDataAsync(videoData.Video);
+                    CurrentViewModel = downloadPageViewModel;
+                }
+                else
+                {
+                    CurrentViewModel = null;
+                }
+                
             }
             catch (Exception ex)
             {
-                windowContext.SnackbarMaranger.Notify(ex.Message);
+                notificationService.Info(ex.Message);
             }
         }
 
 
-        private bool CanConfirm => SelectedVideos.Any();
 
-        [RelayCommand(CanExecute = nameof(CanConfirm))]
-        private async Task Confirm()
-        {
-            if (!SelectedVideos.Any())
-                return;
-
-            try
-            {
-                
-                foreach (var item in SelectedVideos.ToList())
-                {
-                    var downloadParam = await downloadService.GetDownloadParam(item);
-                    windowContext.AppCommandService.DownloadMedia(downloadParam);
-                    await Task.Delay(20);
-                    SelectedVideos.Remove(item);
-                }
-                windowContext.SnackbarMaranger.Notify($"已经开始下载,请点击左边基础查看");
-            }
-            catch (Exception ex) {
-                windowContext.SnackbarMaranger.Notify(ex.Message);
-            }
-
-        }
-
-        [RelayCommand(CanExecute = nameof(CanConfirm))]
-        private void Cancel()
-        {
-            SelectedVideos.Clear();
-        }
 
     }
 }

@@ -5,7 +5,9 @@ using System.Text;
 
 namespace M3u8Downloader_H.bilibili.Framework
 {
-    public class IPluginViewModelBase : ObservableObject
+    public class PluginViewModelBase : ObservableObject
     {
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+
     }
 }

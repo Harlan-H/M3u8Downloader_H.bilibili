@@ -1,57 +1,59 @@
-﻿using M3u8Downloader_H.bilibili.Core;
+﻿using M3u8Downloader_H.Abstractions.Common;
 using M3u8Downloader_H.bilibili.Core.Extensions;
 using M3u8Downloader_H.bilibili.Core.Models;
 using M3u8Downloader_H.bilibili.Core.Streams;
 using M3u8Downloader_H.bilibili.Models;
 using M3u8Downloader_H.Common.DownloadPrams;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 
 namespace M3u8Downloader_H.bilibili.Services
 {
     
-    internal class DownloadServices(BiliApiService biliApiService)
+    public class DownloadServices(BiliApiService biliApiService,IAppCommandService appCommandService)
     {
-        private static readonly Dictionary<string, string> _header = new()
-        {
-            { "referer", "https://www.bilibili.com" }
-        };
+        public HttpClient HttpClient => biliApiService.Client;
 
-        private Video Video = default!;
         public async Task<VideoData> ParseQuery(string? url)
         {
             url = url?.Trim();
-
             var videoId = VideoId.TryParse(url);
             if (videoId != null)
             {
                 var videoData = await biliApiService.BiliClient.Videos.GetVideoInfoAsync(videoId.Value);
-                Video = videoData.Video;
                 return videoData;
             }
 
             throw new InvalidOperationException("不支持得请求地址");
         }
 
-        public async Task<MediaDownloadParams> GetDownloadParam(PlayList playList)
+        public static void PopulateStreamInfos(IList<StreamInfoItem> streamInfoItems, IList<Core.Models.StreamInfo> streamInfos, List<SupportFormat> supportFormats)
         {
-            StreamId streamId = new(Video.Bvid, Video.Aid, playList);
-            var streamManifest = await biliApiService.BiliClient.Streams.GetStreamManifestAsync(streamId);
-            streamManifest.EnsureSuccess();
+            var bestStreamInfo = streamInfos.GetBestStreamInfos();
+            foreach (var streamInfo in bestStreamInfo)
+            {
+                var supportFormat = supportFormats.First(supportFormat => streamInfo.Quality == supportFormat.Quality);
+                streamInfoItems.Add(new StreamInfoItem(streamInfo, supportFormat));
+            }
 
-            var video = streamManifest.Data.Dash.Videos.GetBestStreamInfoOptions();
-            var audio = streamManifest.Data.Dash.Audios.GetBestStreamInfoOptions();
+        }
 
+        public async Task<StreamData> GetStreamDataAsync(Video video, PlayList playList)
+        {
+            StreamId streamId = new(video.Bvid, video.Aid, playList);
+            return  await biliApiService.BiliClient.Streams.GetStreamManifestAsync(streamId);
+        }
+
+        public void DownloadMedia(string savePath , string title, Core.Models.StreamInfo video, Core.Models.StreamInfo audio)
+        {
             int index = Random.Shared.Next(video.BaseUrls.Count);
+            Uri videoUri = new(video.BaseUrls[index]);
+            Uri audioUri = new(audio.BaseUrls[index]);
 
-            Uri videoUri = new(video.BaseUrls[0]);
-            Uri audioUri = new(audio.BaseUrls[0]);
-
-            return new MediaDownloadParams(string.Empty, videoUri, audioUri, playList.Title, _header)
+            var param = new MediaDownloadParams(savePath, videoUri, audioUri, title, null)
             {
                 IsVideoStream = true,
             };
+            appCommandService.DownloadMedia(biliApiService.Client, param);
         }
     }
 }

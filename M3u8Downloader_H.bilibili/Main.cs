@@ -5,7 +5,7 @@ using M3u8Downloader_H.Attributes.Attributes;
 
 namespace M3u8Downloader_H.bilibili
 {
-    [Plugin("b站","b站的bv系列视频下载","Harlan","5.1.0",HasUi = true)]
+    [Plugin("bilibili", "b站的bv系列视频下载","Harlan","5.1.1",HasUi = true)]
     public class Main : IPluginEntry
     {
         public bool CanHandle(Uri url) => false;    

@@ -5,31 +5,25 @@ using System.Text.Json.Serialization;
 
 namespace M3u8Downloader_H.bilibili.Core.Models
 {
-    public class StreamManifest
-    {
-        [JsonPropertyName("code")]
-        public int Code { get; set; }
-
-        [JsonPropertyName("message")]
-        public string Message { get; set; } = default!;
-
-        [JsonPropertyName("data")]
-        public StreamData Data { get; set; } = default!;
-    }
+    public class StreamManifest : CommonResp<StreamData>;
 
     public class StreamData
     {
         [JsonPropertyName("dash")]
         public StreamDash Dash { get; set; } = default!;
+
+        [JsonPropertyName("support_formats")]
+        public List<SupportFormat> SupportFormats { get; set; } = default!;
     }
+
 
     public class StreamDash
     {
         [JsonPropertyName("video")]
-        public IList<StreamInfo> Videos { get; set; } = default!;
+        public List<StreamInfo> Videos { get; set; } = default!;
 
         [JsonPropertyName("audio")]
-        public IList<StreamInfo> Audios { get; set; } = default!;
+        public List<StreamInfo> Audios { get; set; } = default!;
     }
 
     public class StreamInfo
@@ -38,7 +32,7 @@ namespace M3u8Downloader_H.bilibili.Core.Models
         public int Quality { get; set; }
 
         [JsonPropertyName("backupUrl")]
-        public IList<string> BaseUrls { get; set; } = default!;
+        public List<string> BaseUrls { get; set; } = default!;
 
         [JsonPropertyName("bandwidth")]
         public int BandWidth { get; set; }
@@ -46,6 +40,18 @@ namespace M3u8Downloader_H.bilibili.Core.Models
         [JsonPropertyName("codecs")]
         public string Codec { get; set; } = default!;
 
+    }
+
+    public class SupportFormat
+    {
+        [JsonPropertyName("quality")]
+        public int Quality { get; set; }
+
+        [JsonPropertyName("format")]
+        public string Format { get; set; } = default!;
+
+        [JsonPropertyName("new_description")]
+        public string Description { get; set; } = default!;
     }
 
     [JsonSerializable(typeof(StreamManifest))]

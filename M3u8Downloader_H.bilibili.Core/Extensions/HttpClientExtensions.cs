@@ -27,10 +27,6 @@ namespace M3u8Downloader_H.bilibili.Core.Extensions
                 )
             {
                 using var request = new HttpRequestMessage(HttpMethod.Get, url);
-                if (!request.Headers.Contains("referer"))
-                {
-                    request.Headers.Add("referer", "https://www.bilibili.com");
-                }
                 return await httpClient.SendHttpRequestAsync(request, cancellationToken);
             }
         }

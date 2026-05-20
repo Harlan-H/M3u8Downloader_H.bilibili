@@ -1,0 +1,37 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:dialogs="using:M3u8Downloader_H.bilibili.ViewModels.Dialogs"
+             x:DataType="dialogs:LoginViewModel"
+             x:Class="M3u8Downloader_H.bilibili.LoginView">
+
+  <Grid RowDefinitions="auto,auto,30,auto" >
+	    <TextBlock
+            Grid.Row="0"
+            Margin="8,16"
+            FontSize="19"
+            FontWeight="SemiBold"
+            Text="请填写登录后的cookie"
+            TextTrimming="CharacterEllipsis" />
+
+      <Grid Grid.Row="1" ColumnDefinitions="auto,*">
+            <TextBlock Text="cookie :" Margin="8,0,0,0" VerticalAlignment="Center" />
+
+            <TextBox Name="cookieTextBox" Grid.Column="1" UseFloatingWatermark="False" Classes="outline dense" Theme="{StaticResource OutlineTextBox}"
+                Text="{Binding Cookie}"
+                Margin="8,0,8,8"           
+                FontSize="18"
+                TextWrapping="Wrap" >
+            </TextBox>
+        </Grid>
+      <TextBlock Grid.Row="2" Text="{Binding ErrorString}" />
+      <StackPanel Grid.Row="3" HorizontalAlignment="Right" Orientation="Horizontal" >
+		  <Button Content="登录" Command="{Binding LoginCommand}"
+                  CommandParameter="{Binding #cookieTextBox.Text}"
+                  IsDefault="True" />
+          <Button Margin="10,0" Content="取消" Command="{Binding CloseCommand}" IsCancel="True" />
+      </StackPanel>
+  </Grid>
+</UserControl>

@@ -11,12 +11,18 @@ namespace M3u8Downloader_H.bilibili.Core.Extensions
         {
             public StreamInfo GetBestStreamInfoOptions()
             {
-                return streamInfo
-                            .OrderByDescending(o => o.Quality)
-                            .ThenByDescending(o => o.BandWidth)
+                return streamInfo.GetBestStreamInfos()
                             .FirstOrDefault()
                             ?? throw new InvalidDataException("没有匹配到任何流数据");
             }
+
+            public IEnumerable<StreamInfo> GetBestStreamInfos()
+            {
+                return streamInfo
+                            .OrderByDescending(o => o.Quality)
+                            .ThenByDescending(o => o.BandWidth);
+            }
+
         }
     }
 }

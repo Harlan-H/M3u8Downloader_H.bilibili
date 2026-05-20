@@ -31,10 +31,12 @@ namespace M3u8Downloader_H.bilibili.Core.Models
         public Owner Owner { get; set; } = default!;
 
         [JsonPropertyName("pic")]
-        public string? Thumbnail { get; set; } = default!;
+        public Uri Thumbnail { get; set; } = default!;
 
         [JsonPropertyName("pages")]
-        public IList<PlayList> PlayLists { get; set; } = default!;
+        public List<PlayList> PlayLists { get; set; } = default!;
+
+
     }
 
     public class Owner

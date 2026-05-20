@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+             xmlns:vm="using:M3u8Downloader_H.bilibili.ViewModels.Components"
+             x:DataType="vm:DownloadSingleViewModel"
+             x:Class="M3u8Downloader_H.bilibili.DownloadSingleView">
+
+
+  <Grid RowDefinitions="40,32,9*,*,40" >
+	  <TextBlock Text="{Binding Title}"  FontSize="30"  TextTrimming="CharacterEllipsis"/>
+      <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5">
+		  <PathIcon Data="{StaticResource up_path}" Width="20" Height="19" Foreground="Black" />
+          <TextBlock Margin="0,5,0,5" >
+		      <TextBlock.Text>
+			    <MultiBinding StringFormat=" {0}   📅 {1}    ⏱ {2}" >
+                    <Binding Path="Owner" />
+				    <Binding Path="PlayList.CTime" />
+                    <Binding Path="PlayList.Duration" />
+                </MultiBinding>
+            </TextBlock.Text>
+          </TextBlock>
+      </StackPanel>
+      <Image Grid.Row="2" asyncImageLoader:ImageLoader.Source="{Binding Thumbnail}" />
+      <TextBlock Grid.Row="3" Text="{Binding Description}"  TextWrapping="Wrap"  MaxLines="2" TextTrimming="CharacterEllipsis" />
+      <Grid Grid.Row="4" ColumnDefinitions="*,*,*">
+            <ComboBox Grid.Column="0" HorizontalAlignment="Right" ItemsSource="{Binding StreamInfoItems}" SelectedItem="{Binding SelectedVideoItem}" DisplayMemberBinding="{Binding Display}" />
+            <Button Grid.Column="2"  Command="{Binding ConfirmCommand}" HorizontalAlignment="Right" Margin="40,4" Content="下载" />
+      </Grid>
+
+  </Grid>
+</UserControl>

@@ -9,19 +9,22 @@ namespace M3u8Downloader_H.bilibili.Core.Streams
 {
     public class StreamClient(HttpClient httpClient)
     {
-        public async ValueTask<StreamManifest> GetStreamManifestAsync(
+        public async ValueTask<StreamData> GetStreamManifestAsync(
            StreamId streamId,
            CancellationToken cancellationToken = default)
         {
             var raw = await httpClient.SendHttpRequestAsync(streamId.PlayUrl, cancellationToken);
-            return GetStreamManiFest(raw);
+            return GetStreamData(raw);
         }
 
-        public static StreamManifest GetStreamManiFest(string raw)
+        public static StreamData GetStreamData(string raw)
         {
             var streamManifest = JsonSerializer.Deserialize(raw, StreamContext.Default.StreamManifest)
                    ?? throw new InvalidDataException("获取视频流出错");
-            return streamManifest;
+
+            if (streamManifest.Code != 0)
+                throw new InvalidDataException(streamManifest.Message);
+            return streamManifest.Data;
         }
     }
 }
