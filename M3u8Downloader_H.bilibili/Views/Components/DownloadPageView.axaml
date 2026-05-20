@@ -80,7 +80,7 @@
                     <Button.Content>
                         <TextBlock>
                             <Run Text="下载"/>
-                            <Run Text="(" /><Run Text="{Binding SelectedVideos.Count,FallbackValue=0,Mode=OneWay}" /><Run Text=")"/>
+                            <Run Text="(" /><Run Text="{Binding SelectedStreamViewModels.Count,FallbackValue=0,Mode=OneWay}" /><Run Text=")"/>
                         </TextBlock>
                     </Button.Content>
                 </Button>

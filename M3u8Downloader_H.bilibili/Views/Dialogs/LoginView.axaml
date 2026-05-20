@@ -19,7 +19,7 @@
       <Grid Grid.Row="1" ColumnDefinitions="auto,*">
             <TextBlock Text="cookie :" Margin="8,0,0,0" VerticalAlignment="Center" />
 
-            <TextBox Name="cookieTextBox" Grid.Column="1" UseFloatingWatermark="False" Classes="outline dense" Theme="{StaticResource OutlineTextBox}"
+            <TextBox Name="cookieTextBox" Grid.Column="1" UseFloatingPlaceholder="False" Classes="outline dense" Theme="{StaticResource OutlineTextBox}"
                 Text="{Binding Cookie}"
                 Margin="8,0,8,8"           
                 FontSize="18"
