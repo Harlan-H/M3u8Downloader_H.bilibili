@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace M3u8Downloader_H.bilibili;
 
-public partial class DownloadPageView : UserControl
+public partial class DownloadMultiView : UserControl
 {
-    public DownloadPageView()
+    public DownloadMultiView()
     {
         InitializeComponent();
     }

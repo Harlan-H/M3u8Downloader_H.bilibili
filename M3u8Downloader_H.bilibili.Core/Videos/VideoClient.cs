@@ -1,17 +1,24 @@
-﻿using M3u8Downloader_H.bilibili.Core.Extensions;
+﻿using M3u8Downloader_H.Abstractions.Models;
+using M3u8Downloader_H.bilibili.Core.Extensions;
 using M3u8Downloader_H.bilibili.Core.Models;
 using M3u8Downloader_H.bilibili.Models;
+using Microsoft.Extensions.Caching.Memory;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace M3u8Downloader_H.bilibili.Core.Videos
 {
-    public partial class VideoClient(HttpClient httpClient)
+    public partial class VideoClient(HttpClient httpClient, ICacheService memoryCache)
     {
         public async ValueTask<VideoData> GetVideoInfoAsync(VideoId videoId, CancellationToken cancellationToken = default)
         {
-            var raw = await httpClient.SendHttpRequestAsync(videoId.Url, cancellationToken);
-            return GetVideo(raw);
+            return await memoryCache.GetOrCreateAsync(videoId.Url,async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20);
+
+                var raw = await httpClient.SendHttpRequestAsync(videoId.Url, cancellationToken);
+                return GetVideo(raw);
+            }) ?? throw new InvalidDataException("获取视频信息失败");
         }
 
         public static VideoData GetVideo(string raw)

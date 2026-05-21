@@ -37,9 +37,9 @@ namespace M3u8Downloader_H.bilibili.Services
 
         }
 
-        public async Task<StreamData> GetStreamDataAsync(Video video, PlayList playList)
+        public async Task<StreamData> GetStreamDataAsync(string bvid,long aid, PlayList playList)
         {
-            StreamId streamId = new(video.Bvid, video.Aid, playList);
+            StreamId streamId = new(bvid, aid, playList);
             return  await biliApiService.BiliClient.Streams.GetStreamManifestAsync(streamId);
         }
 

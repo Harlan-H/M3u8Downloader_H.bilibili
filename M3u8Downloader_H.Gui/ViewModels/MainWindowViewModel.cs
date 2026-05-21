@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using M3u8Downloader_H.Abstractions.Models;
 using M3u8Downloader_H.Abstractions.Plugins.Window;
 using M3u8Downloader_H.bilibili;
+using M3u8Downloader_H.Gui.Utils;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
@@ -31,6 +33,7 @@ namespace M3u8Downloader_H.Gui.ViewModels
             services.AddSingleton(context.AppCommandService);
             services.AddSingleton(context.PluginStorageService);
             services.AddSingleton(context.HttpFactory);
+            services.AddSingleton<ICacheService>(new CacheService());
             windowInstance.ConfigureServices(services);
 
             var serviceProvider1 = services.BuildServiceProvider();

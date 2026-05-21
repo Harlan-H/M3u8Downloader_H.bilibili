@@ -1,23 +1,27 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Media.Imaging;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using M3u8Downloader_H.Abstractions.Models;
+using M3u8Downloader_H.Abstractions.Plugins.Download;
 using M3u8Downloader_H.bilibili.Core.Models;
 using M3u8Downloader_H.bilibili.Framework;
+using M3u8Downloader_H.bilibili.Models;
 using M3u8Downloader_H.bilibili.Services;
 using System.Collections.ObjectModel;
 
 namespace M3u8Downloader_H.bilibili.ViewModels.Components
 {
-    public partial class DownloadPageViewModel : PluginViewModelBase
+    public partial class DownloadMultiViewModel : PluginViewModelBase
     {
         private readonly DownloadServices downloadService;
+        private readonly ImageHelper imageHelper;
         private readonly INotificationService notificationService;
 
         [ObservableProperty]
         public partial string Title { get; set; } = string.Empty;
 
         [ObservableProperty]
-        public partial Uri Thumbnail { get; set; } = default!;
+        public partial Bitmap Thumbnail { get; set; } = default!;
 
         [ObservableProperty]
         public partial string Owner { get; set; } = string.Empty;
@@ -29,9 +33,10 @@ namespace M3u8Downloader_H.bilibili.ViewModels.Components
 
         public ObservableCollection<StreamViewModel> SelectedStreamViewModels { get; } = [];
 
-        public DownloadPageViewModel(DownloadServices downloadService,INotificationService notificationService)
+        public DownloadMultiViewModel(DownloadServices downloadService, ImageHelper imageHelper, INotificationService notificationService)
         {
             this.downloadService = downloadService;
+            this.imageHelper = imageHelper;
             this.notificationService = notificationService;
             SelectedStreamViewModels.CollectionChanged += (_, _) =>
             {
@@ -40,17 +45,25 @@ namespace M3u8Downloader_H.bilibili.ViewModels.Components
             };
         }
 
-        public async Task InitStreamDataAsync(Video video)
+        public async Task InitPageStreamDataAsync(Video video)
         {
             try
             {
+                Thumbnail = await imageHelper.LoadFromUrlAsync(video.Thumbnail);
+
                 foreach (var item in video.PlayLists)
                 {
-                    var streamViewModel = new StreamViewModel(item);
-                    var streamdata = await downloadService.GetStreamDataAsync(video, item);
+                    var streamViewModel = new StreamViewModel()
+                    {
+                        Page = item.Page,
+                        Duration = item.Duration ?? TimeSpan.Zero,
+                        Title = item.Title ?? "好像没有标题",
+                        CTime = item.CTime
+                    };
+                    var streamdata = await downloadService.GetStreamDataAsync(video.Bvid, video.Aid, item);
                     streamViewModel.InitStreamDataAsync(streamdata);
                     StreamViewModels.Add(streamViewModel);
-                    await Task.Delay(20);
+                    await Task.Delay(1);
                 }
             }
             catch (Exception ex)
@@ -59,7 +72,32 @@ namespace M3u8Downloader_H.bilibili.ViewModels.Components
             }
         }
 
+        public async Task InitEpisodeStreamDataAsync(UgcSeason ugcSeason)
+        {
+            try
+            {
+                Thumbnail = await imageHelper.LoadFromUrlAsync(ugcSeason.Pic);
 
+                foreach (var (index, item) in ugcSeason.Sections[0].Episodes.Index())
+                {
+                    var streamViewModel = new StreamViewModel()
+                    {
+                        Page = index + 1,
+                        Duration = item.PlayList.Duration ?? TimeSpan.Zero,
+                        Title = item.Title,
+                        CTime = item.Arc.Ctime
+                    };
+                    var streamdata = await downloadService.GetStreamDataAsync(item.Bvid, item.Aid, item.PlayList);
+                    streamViewModel.InitStreamDataAsync(streamdata);
+                    StreamViewModels.Add(streamViewModel);
+                    await Task.Delay(1);
+                }
+            }
+            catch (Exception ex)
+            {
+                notificationService.Info($"获取音视频下载信息失败,{ex.Message}");
+            }
+        }
 
         private bool CanConfirm => SelectedStreamViewModels.Any();
 

@@ -4,20 +4,20 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:vm="using:M3u8Downloader_H.bilibili.ViewModels.Components"
-             xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
-             x:DataType="vm:DownloadPageViewModel"
+             x:DataType="vm:DownloadMultiViewModel"
              xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             x:Class="M3u8Downloader_H.bilibili.DownloadPageView">
+             x:Class="M3u8Downloader_H.bilibili.DownloadMultiView">
+
   <Grid RowDefinitions="200, *, 50">
         <Grid ColumnDefinitions="auto,*">
-			<Image asyncImageLoader:ImageLoader.Source="{Binding Thumbnail}" />
+			<Image Source="{Binding Thumbnail}" />
             <StackPanel Margin="10,0,0,0" Grid.Column="1">
 				 <TextBlock Text="{Binding Title}"  FontSize="30"  TextTrimming="CharacterEllipsis"/>
-                <StackPanel Orientation="Horizontal" Margin="5">
+                <StackPanel Orientation="Horizontal" Margin="">
 		          <PathIcon Data="{StaticResource up_path}" Width="20" Height="19" Foreground="Black" />
-                  <TextBlock Margin="0,5,0,5" Text="{Binding Owner,StringFormat=  {}{0}}" />
+                  <TextBlock Margin="5" Text="{Binding Owner,StringFormat=  {}{0}}" />
                 </StackPanel>
-                <TextBlock Text="{Binding Description}" TextWrapping="Wrap"  TextTrimming="CharacterEllipsis" />
+                <TextBlock Text="{Binding Description}" MaxLines="7" TextWrapping="Wrap"  TextTrimming="CharacterEllipsis" />
             </StackPanel>
         </Grid>
 

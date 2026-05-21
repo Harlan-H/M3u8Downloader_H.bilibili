@@ -12,20 +12,20 @@ using System.Text;
 
 namespace M3u8Downloader_H.bilibili.ViewModels.Components
 {
-    public partial class StreamViewModel(PlayList playList) : PluginViewModelBase
+    public partial class StreamViewModel : PluginViewModelBase
     {
 
         [ObservableProperty]
-        public partial int Page { get; set; } = playList.Page;
+        public partial int Page { get; set; }
 
         [ObservableProperty]
-        public partial string Title { get; set; } = playList.Title ?? "好像没有标题";
+        public partial string Title { get; set; }
 
         [ObservableProperty]
-        public partial TimeSpan Duration { get; set; } = playList.Duration ?? TimeSpan.Zero;
+        public partial TimeSpan Duration { get; set; }
 
         [ObservableProperty]
-        public partial DateTime CTime { get; set; } = playList.CTime;
+        public partial DateTime CTime { get; set; }
 
         public ObservableCollection<StreamInfoItem> StreamInfoItems { get; set; } = [];
 

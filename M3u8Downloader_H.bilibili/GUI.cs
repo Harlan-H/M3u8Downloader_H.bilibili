@@ -22,15 +22,14 @@ namespace M3u8Downloader_H.bilibili
             services.AddSingleton<DownloadServices>();
             services.AddSingleton<SettingsService>();
             services.AddSingleton<UserService>();
+            services.AddSingleton<ImageHelper>();
             services.AddSingleton<ViewModelManager>();
 
             services.AddSingleton<MainWindowViewModel>();
 
             services.AddTransient<LoginViewModel>();
-            services.AddTransient<DownloadPageViewModel>();
+            services.AddTransient<DownloadMultiViewModel>();
             services.AddTransient<DownloadSingleViewModel>();
-            services.AddTransient<DownloadPageViewModel>();
-
         }
     }
 }

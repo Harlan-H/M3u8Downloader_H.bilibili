@@ -11,6 +11,7 @@ namespace M3u8Downloader_H.bilibili.Services
         private CookieContainer? _cookieContainer;
         private static readonly string defaultKey = typeof(Main).Assembly.FullName!;
         private readonly IHttpFactory httpFactory;
+        private readonly ICacheService cacheService;
 
         public BiliCoreClient BiliClient { 
             get {
@@ -18,7 +19,7 @@ namespace M3u8Downloader_H.bilibili.Services
                     return _biliCoreClient;
 
                 _httpClient = httpFactory.GetClient(defaultKey);
-                _biliCoreClient = new BiliCoreClient(_httpClient);
+                _biliCoreClient = new BiliCoreClient(_httpClient, cacheService);
                 return _biliCoreClient;
             }
         }
@@ -26,9 +27,10 @@ namespace M3u8Downloader_H.bilibili.Services
         public HttpClient Client => _httpClient!;
 
 
-        public BiliApiService(IHttpFactory httpFactory)
+        public BiliApiService(IHttpFactory httpFactory,ICacheService cacheService)
         {
             this.httpFactory = httpFactory;
+            this.cacheService = cacheService;
             httpFactory.Configure(defaultKey, HttpConfigure);
             httpFactory.ProxyChanged += ApiFactory_ProxyChanged;
         }
@@ -36,7 +38,7 @@ namespace M3u8Downloader_H.bilibili.Services
         public void SetCookie(string cookie)
         {
             bool isSet = false;
-            foreach (var part in cookie.Split(';'))
+            foreach (var part in cookie.Split(';',StringSplitOptions.TrimEntries))
             {
                 if (part.StartsWith("SESSDATA"))
                 {

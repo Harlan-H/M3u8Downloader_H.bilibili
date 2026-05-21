@@ -12,22 +12,19 @@ namespace M3u8Downloader_H.bilibili.Core.Models
 
     public class Video
     {
-        [JsonPropertyName("bvid")]
         public string Bvid { get; set; } = string.Empty;
 
-        [JsonPropertyName("aid")]
         public long Aid { get; set; }
 
         [JsonPropertyName("videos")]
         public int VideoSize { get; set; }
 
-        [JsonPropertyName("title")]
         public string Title { get; set; } = default!;
 
         [JsonPropertyName("desc")]
         public string Description { get; set; } = default!;
 
-        [JsonPropertyName("owner")]
+ 
         public Owner Owner { get; set; } = default!;
 
         [JsonPropertyName("pic")]
@@ -36,7 +33,8 @@ namespace M3u8Downloader_H.bilibili.Core.Models
         [JsonPropertyName("pages")]
         public List<PlayList> PlayLists { get; set; } = default!;
 
-
+        [JsonPropertyName("ugc_season")]
+        public UgcSeason UgcSeasons { get; set; } = default!;
     }
 
     public class Owner
@@ -60,14 +58,55 @@ namespace M3u8Downloader_H.bilibili.Core.Models
         [JsonConverter(typeof(TimeSpanJsonConverter))]
         public TimeSpan? Duration { get; set; }
 
-        [JsonPropertyName("first_frame")]
-        public string Thumbnail { get; set; } = default!;
 
         [JsonPropertyName("ctime")]
         [JsonConverter(typeof(DateTimeJsonConverter))]
         public DateTime CTime { get; set; }
     }
 
+
+
+    public class UgcSeason {
+
+        [JsonPropertyName("title")]
+        public string Title { get; set; } = default!;
+
+        [JsonPropertyName("cover")]
+        public Uri Pic { get; set; } = default!;
+
+        [JsonPropertyName("intro")]
+        public string Description { get; set; } = default!;
+
+        public List<UgcSection> Sections { get; set; } = default!;
+    }
+
+    public class UgcSection
+    {
+        public List<VideoEpisode> Episodes { get; set; } = default!;
+    }
+
+    public class VideoEpisode
+    {
+        public long Aid { get; set; }
+
+        public string Title { get; set; } = default!;
+
+        [JsonPropertyName("arc")]
+        public Arc Arc { get; set; } = default!;
+
+        [JsonPropertyName("page")]
+        public PlayList PlayList { get; set; } = default!;
+
+        public string Bvid { get; set; } = default!;
+    }
+
+    public class Arc
+    {
+        [JsonConverter(typeof(DateTimeJsonConverter))]
+        public DateTime Ctime { get; set; } = default!;
+    }
+
+    [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
     [JsonSerializable(typeof(VideoData))]
     public partial class VideoContext : JsonSerializerContext;
 

@@ -5,16 +5,17 @@ using M3u8Downloader_H.bilibili.Framework;
 using M3u8Downloader_H.bilibili.Services;
 using M3u8Downloader_H.bilibili.ViewModels.Dialogs;
 
+
 namespace M3u8Downloader_H.bilibili.ViewModels
 {
+    public enum EpisodeMode { Single, Multi }
+
     public partial class MainWindowViewModel(
         INotificationService notificationService,
         ViewModelManager viewModelManager,
         SettingsService settingsService,
         DownloadServices downloadService) : PluginViewModelBase
     {
-        private string oldRequestUrl = default!;
-
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(ShowLoginDialogCommand))]
         public partial string? UName { get; set; }
@@ -23,12 +24,14 @@ namespace M3u8Downloader_H.bilibili.ViewModels
         [NotifyCanExecuteChangedFor(nameof(StartParseCommand))]
         public partial string RequestUrl { get; set; } = default!;
 
-
         public bool ShowViewModel => CurrentViewModel is not null;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(ShowViewModel))]
         public partial PluginViewModelBase? CurrentViewModel { get; set; } = default;
+
+        [ObservableProperty]
+        public partial EpisodeMode SelectedEpisode { get; set; } = EpisodeMode.Single;
 
 
         public override async Task InitializeAsync()
@@ -66,31 +69,39 @@ namespace M3u8Downloader_H.bilibili.ViewModels
         [RelayCommand(CanExecute = nameof(CanStartParse))]
         private async Task StartParse()
         {
-            if (RequestUrl.Equals(oldRequestUrl))
-                return;
-
-            oldRequestUrl = RequestUrl;
-
             try
             {
                 var videoData = await downloadService.ParseQuery(RequestUrl);
-                if(videoData.Video.VideoSize == 1)
+                if (videoData.Video.VideoSize == 1 && videoData.Video.UgcSeasons is null)
                 {
                     var downloadviewmodel = viewModelManager.CreateDownloadSingleViewModel(videoData.Video);
-                    CurrentViewModel = downloadviewmodel;
                     _ = downloadviewmodel.InitStreamDataAsync(videoData.Video);
+                    CurrentViewModel = downloadviewmodel;
                 }
+                //可能是合集 也可能是一个视频里多集 优先匹配多集
                 else if (videoData.Video.VideoSize > 1)
                 {
-                    var downloadPageViewModel  = viewModelManager.CreateDownloadPageViewModel(videoData.Video);
-                    _ = downloadPageViewModel.InitStreamDataAsync(videoData.Video);
+                    var downloadPageViewModel = viewModelManager.CreateDownloadPageViewModel(videoData.Video);
+                    _ = downloadPageViewModel.InitPageStreamDataAsync(videoData.Video);
                     CurrentViewModel = downloadPageViewModel;
                 }
-                else
+                //一定是合集
+                else if (videoData.Video.UgcSeasons is not null && videoData.Video.UgcSeasons.Sections[0].Episodes.Count > 1)
                 {
-                    CurrentViewModel = null;
+                    if (SelectedEpisode == EpisodeMode.Single)
+                    {
+                        var downloadviewmodel = viewModelManager.CreateDownloadSingleViewModel(videoData.Video);
+                        _ = downloadviewmodel.InitStreamDataAsync(videoData.Video);
+                        CurrentViewModel = downloadviewmodel;
+                    }
+                    else if (SelectedEpisode == EpisodeMode.Multi)
+                    {
+                        var downloadviewModel = viewModelManager.CreateDownloadPageViewModel(videoData.Video);
+                        _ = downloadviewModel.InitEpisodeStreamDataAsync(videoData.Video.UgcSeasons);
+                        CurrentViewModel = downloadviewModel;
+                    }
                 }
-                
+
             }
             catch (Exception ex)
             {

@@ -12,8 +12,7 @@ namespace M3u8Downloader_H.bilibili.Framework
                {
                    LoginViewModel => new LoginView(),
                    DownloadSingleViewModel => new DownloadSingleView(),
-                   DownloadPageViewModel => new DownloadPageView(),
-                   DownloadEpisodeViewModel => new DownloadEpiscodeView(),
+                   DownloadMultiViewModel => new DownloadMultiView(),
                    _ => null,
                };
 

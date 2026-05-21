@@ -11,7 +11,7 @@
 
   <Grid RowDefinitions="40,32,9*,*,40" >
 	  <TextBlock Text="{Binding Title}"  FontSize="30"  TextTrimming="CharacterEllipsis"/>
-      <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5">
+      <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5,0">
 		  <PathIcon Data="{StaticResource up_path}" Width="20" Height="19" Foreground="Black" />
           <TextBlock Margin="0,5,0,5" >
 		      <TextBlock.Text>
@@ -23,7 +23,7 @@
             </TextBlock.Text>
           </TextBlock>
       </StackPanel>
-      <Image Grid.Row="2" asyncImageLoader:ImageLoader.Source="{Binding Thumbnail}" />
+      <Image Grid.Row="2" Source="{Binding Thumbnail}" />
       <TextBlock Grid.Row="3" Text="{Binding Description}"  TextWrapping="Wrap"  MaxLines="2" TextTrimming="CharacterEllipsis" />
       <Grid Grid.Row="4" ColumnDefinitions="*,*,*">
             <ComboBox Grid.Column="0" HorizontalAlignment="Right" ItemsSource="{Binding StreamInfoItems}" SelectedItem="{Binding SelectedVideoItem}" DisplayMemberBinding="{Binding Display}" />

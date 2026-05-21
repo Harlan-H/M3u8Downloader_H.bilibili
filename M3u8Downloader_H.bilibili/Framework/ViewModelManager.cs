@@ -1,4 +1,5 @@
 ﻿using M3u8Downloader_H.bilibili.Core.Models;
+using M3u8Downloader_H.bilibili.Models;
 using M3u8Downloader_H.bilibili.Services;
 using M3u8Downloader_H.bilibili.ViewModels.Components;
 using M3u8Downloader_H.bilibili.ViewModels.Dialogs;
@@ -21,21 +22,18 @@ namespace M3u8Downloader_H.bilibili.Framework
             singleViewModel.Title = video.Title;
             singleViewModel.Owner = video.Owner.Author;
             singleViewModel.Description = video.Description;
-            singleViewModel.Thumbnail = video.Thumbnail;
             singleViewModel.PlayList = video.PlayLists.Single();
             return singleViewModel;
         }
 
-        public DownloadPageViewModel CreateDownloadPageViewModel(Video video)
+        public DownloadMultiViewModel CreateDownloadPageViewModel(Video video)
         {
-            var pageViewModel = serviceProvider.GetRequiredService<DownloadPageViewModel>();
+            var pageViewModel = serviceProvider.GetRequiredService<DownloadMultiViewModel>();
             pageViewModel.Title = video.Title;
             pageViewModel.Owner = video.Owner.Author;
             pageViewModel.Description = video.Description;
-            pageViewModel.Thumbnail = video.Thumbnail;
             return pageViewModel;
         }
-
 
     }
 }

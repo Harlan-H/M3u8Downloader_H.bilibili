@@ -1,5 +1,7 @@
-﻿using M3u8Downloader_H.bilibili.Core.Extensions;
+﻿using M3u8Downloader_H.Abstractions.Models;
+using M3u8Downloader_H.bilibili.Core.Extensions;
 using M3u8Downloader_H.bilibili.Core.Models;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Text;

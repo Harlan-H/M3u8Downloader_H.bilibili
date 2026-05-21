@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:materialDesign="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+             xmlns:converters="clr-namespace:Avalonia.Controls.Converters;assembly=Avalonia.Controls"
              xmlns:vm="using:M3u8Downloader_H.bilibili.ViewModels"
              xmlns:framework="using:M3u8Downloader_H.bilibili.Framework"
              Loaded="UserControl_Loaded"
@@ -20,6 +21,7 @@
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceInclude Source="/Assets/Icons.axaml" />
             </ResourceDictionary.MergedDictionaries>
+            <converters:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -28,6 +30,18 @@
             DisableOpeningAnimation="True">
      <Grid RowDefinitions="auto, auto, *">
             <Grid ColumnDefinitions="*,*,*" >
+                <StackPanel  Orientation="Horizontal" Margin="10,0" ToolTip.Tip="默认为单集模式,如果你需要下载的是合集,请点击合集">
+                        <RadioButton GroupName="First Group"
+                                     IsChecked="{Binding SelectedEpisode,
+                                     Converter={StaticResource EnumToBoolConverter},
+                                     ConverterParameter={x:Static vm:EpisodeMode.Single}}"
+                    Content="单集"/>
+                  <RadioButton GroupName="First Group"
+                               IsChecked="{Binding SelectedEpisode,
+                                Converter={StaticResource EnumToBoolConverter},
+                                ConverterParameter={x:Static vm:EpisodeMode.Multi}}"
+                            Content="合集"/>
+                </StackPanel>
 				<TextBlock Grid.Column="2" Text="{Binding UName,TargetNullValue=未登录}" />
             </Grid>
             <Grid Grid.Row="1" Margin="8"  Grid.ColumnDefinitions="*,auto,auto">
