@@ -17,6 +17,11 @@ namespace M3u8Downloader_H.bilibili.ViewModels.Components
         private readonly ImageHelper imageHelper;
         private readonly INotificationService notificationService;
 
+        private string SavePath 
+        {
+            get => field ??= Path.GetInvalidFileNameChars().Append('.').Aggregate(Title, (current, invalidChar) => current.Replace(invalidChar, '_'));
+        }
+
         [ObservableProperty]
         public partial string Title { get; set; } = string.Empty;
 
@@ -90,7 +95,7 @@ namespace M3u8Downloader_H.bilibili.ViewModels.Components
                     var streamdata = await downloadService.GetStreamDataAsync(item.Bvid, item.Aid, item.PlayList);
                     streamViewModel.InitStreamDataAsync(streamdata);
                     StreamViewModels.Add(streamViewModel);
-                    await Task.Delay(1);
+                    await Task.Delay(20);
                 }
             }
             catch (Exception ex)
@@ -112,7 +117,7 @@ namespace M3u8Downloader_H.bilibili.ViewModels.Components
 
                 foreach (var item in SelectedStreamViewModels.ToList())
                 {
-                    downloadService.DownloadMedia(Title,item.Title,item.SelectedVideoItem.Stream, item.AudioStreamInfo);
+                    downloadService.DownloadMedia(SavePath, item.Title,item.SelectedVideoItem.Stream, item.AudioStreamInfo);
                     await Task.Delay(20);
                     SelectedStreamViewModels.Remove(item);
                 }
