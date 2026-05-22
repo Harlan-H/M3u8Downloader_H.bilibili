@@ -16,6 +16,7 @@ namespace M3u8Downloader_H.bilibili.ViewModels
         SettingsService settingsService,
         DownloadServices downloadService) : PluginViewModelBase
     {
+        private bool _isInitialized = false;
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(ShowLoginDialogCommand))]
         public partial string? UName { get; set; }
@@ -36,6 +37,9 @@ namespace M3u8Downloader_H.bilibili.ViewModels
 
         public override async Task InitializeAsync()
         {
+            if (_isInitialized)
+                return;
+
             settingsService.Load();
             if (!string.IsNullOrEmpty(settingsService.Cookie))
             {
@@ -49,6 +53,7 @@ namespace M3u8Downloader_H.bilibili.ViewModels
                     notificationService.Info($"获取用户信息失败,{ex.Message}");
                 }
             }
+            _isInitialized = true;
         }
 
         private bool CanShowLoginDialog => string.IsNullOrEmpty(UName);

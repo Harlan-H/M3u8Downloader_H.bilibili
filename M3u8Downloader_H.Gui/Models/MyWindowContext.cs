@@ -12,6 +12,6 @@ namespace M3u8Downloader_H.Gui.Models
 
         public INotificationService NotificationService => new SnackbarManager(string.Empty,TimeSpan.Zero);
         public IAppCommandService AppCommandService => new AppCommandService();
-        public IPluginStorage PluginStorageService => new PluginStorage("C:\\Users\\admin\\Desktop\\666\\PluginData");
+        public IPluginStorage PluginStorageService => new PluginStorage("C:\\Users\\admin\\Desktop\\666\\PluginData\\M3u8Downloader_H.bilibili");
     }
 }
