@@ -21,6 +21,10 @@ namespace M3u8Downloader_H.bilibili.Core.Models
 
         public string Title { get; set; } = default!;
 
+        [JsonPropertyName("ctime")]
+        [JsonConverter(typeof(DateTimeJsonConverter))]
+        public DateTime CTime { get; set; }
+
         [JsonPropertyName("desc")]
         public string Description { get; set; } = default!;
 
@@ -57,11 +61,6 @@ namespace M3u8Downloader_H.bilibili.Core.Models
         [JsonPropertyName("duration")]
         [JsonConverter(typeof(TimeSpanJsonConverter))]
         public TimeSpan? Duration { get; set; }
-
-
-        [JsonPropertyName("ctime")]
-        [JsonConverter(typeof(DateTimeJsonConverter))]
-        public DateTime CTime { get; set; }
     }
 
 

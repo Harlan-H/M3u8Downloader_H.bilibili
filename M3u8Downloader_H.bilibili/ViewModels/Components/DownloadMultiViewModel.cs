@@ -63,7 +63,7 @@ namespace M3u8Downloader_H.bilibili.ViewModels.Components
                         Page = item.Page,
                         Duration = item.Duration ?? TimeSpan.Zero,
                         Title = item.Title ?? "好像没有标题",
-                        CTime = item.CTime
+                        CTime = video.CTime
                     };
                     var streamdata = await downloadService.GetStreamDataAsync(video.Bvid, video.Aid, item);
                     streamViewModel.InitStreamDataAsync(streamdata);
@@ -95,7 +95,7 @@ namespace M3u8Downloader_H.bilibili.ViewModels.Components
                     var streamdata = await downloadService.GetStreamDataAsync(item.Bvid, item.Aid, item.PlayList);
                     streamViewModel.InitStreamDataAsync(streamdata);
                     StreamViewModels.Add(streamViewModel);
-                    await Task.Delay(20);
+                    await Task.Delay(1);
                 }
             }
             catch (Exception ex)

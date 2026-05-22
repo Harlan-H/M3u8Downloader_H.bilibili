@@ -13,7 +13,6 @@ namespace M3u8Downloader_H.bilibili.ViewModels.Components
 {
     public partial class DownloadSingleViewModel(DownloadServices downloadServices, ImageHelper imageHelper, INotificationService notificationService) : PluginViewModelBase
     {
-        private bool _isDownloaded = false;
         private List<StreamInfo> _audios = default!;
 
         [ObservableProperty]
@@ -24,6 +23,9 @@ namespace M3u8Downloader_H.bilibili.ViewModels.Components
 
         [ObservableProperty]
         public partial string Owner { get; set; } = string.Empty;
+
+        [ObservableProperty]
+        public partial DateTime CTime { get; set; } = default!;
 
         [ObservableProperty]
         public partial string Description { get; set; } = string.Empty;
@@ -47,8 +49,6 @@ namespace M3u8Downloader_H.bilibili.ViewModels.Components
                 _audios = [.. streamdata.Dash.Audios.GetBestStreamInfos()];
                 DownloadServices.PopulateStreamInfos(StreamInfoItems, streamdata.Dash.Videos, streamdata.SupportFormats);
                 SelectedVideoItem = StreamInfoItems.First();
-
-
             }
             catch (Exception ex)
             {
@@ -57,18 +57,15 @@ namespace M3u8Downloader_H.bilibili.ViewModels.Components
         }
 
 
-        private bool CanConfirm => _isDownloaded is false && PlayList.Cid != 0;
+        private bool CanConfirm => PlayList.Cid != 0;
         [RelayCommand(CanExecute = nameof(CanConfirm))]
         private async Task Confirm()
         {
-            if (_isDownloaded)
-                return;
 
             try
             {
                 downloadServices.DownloadMedia(string.Empty, Title, SelectedVideoItem.Stream, _audios.First());
 
-                _isDownloaded = true;
                 notificationService.Info($"已经开始下载,请点击左边基础查看");
             }
             catch (Exception ex)

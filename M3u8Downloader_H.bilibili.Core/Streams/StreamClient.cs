@@ -11,7 +11,7 @@ namespace M3u8Downloader_H.bilibili.Core.Streams
            StreamId streamId,
            CancellationToken cancellationToken = default)
         {
-            return await memoryCache.GetOrCreateAsync(streamId.PlayUrl, async entry =>
+            return await memoryCache.GetOrCreateAsync(streamId.Aid, async entry =>
             {
                 entry.SlidingExpiration = TimeSpan.FromMinutes(20);
 

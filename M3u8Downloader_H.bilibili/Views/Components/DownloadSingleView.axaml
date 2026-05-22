@@ -17,7 +17,7 @@
 		      <TextBlock.Text>
 			    <MultiBinding StringFormat=" {0}   📅 {1}    ⏱ {2}" >
                     <Binding Path="Owner" />
-				    <Binding Path="PlayList.CTime" />
+				    <Binding Path="CTime" />
                     <Binding Path="PlayList.Duration" />
                 </MultiBinding>
             </TextBlock.Text>
